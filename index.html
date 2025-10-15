@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Futura — Personal Portfolio</title>
+
+    <!-- Tailwind Play CDN (good for prototypes) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind config for custom colors
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        aura: '#6ef3ff',
+                        vio: '#a28bff',
+                        deep: '#061125',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        #mobileMenu {
+            transition: all 0.25s ease;
+            transform-origin: top right;
+        }
+
+        #mobileMenu.flex {
+            animation: dropIn 0.25s ease-out forwards;
+        }
+
+        @keyframes dropIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Smooth fade-in on page load */
+        body {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeSlideIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Soft fade & scale-in for project cards */
+        /* Smooth transition for each card */
+        #projectsGrid article {
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* Card hover & focus animation */
+        #projectsGrid article:hover,
+        #projectsGrid article:focus-within {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(110, 243, 255, 0.25);
+            box-shadow: 0 12px 25px rgba(110, 243, 255, 0.08), 0 8px 20px rgba(162, 139, 255, 0.06);
+        }
+
+        /* Image zoom on hover */
+        #projectsGrid article img {
+            transition: transform 0.6s ease;
+        }
+
+        #projectsGrid article:hover img,
+        #projectsGrid article:focus-within img {
+            transform: scale(1.1);
+        }
+
+        /* Darken overlay slightly when hovered */
+        #projectsGrid article:hover .absolute.inset-0,
+        #projectsGrid article:focus-within .absolute.inset-0 {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+        }
+
+        /* Title gradient shimmer */
+        #projectsGrid article:hover h4 {
+            background: linear-gradient(90deg, #6ef3ff, #a28bff, #6ef3ff);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        /* Soft fade-in when cards load */
+        #projectsGrid article {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeUp 0.7s ease forwards;
+        }
+
+        #projectsGrid article:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        #projectsGrid article:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        #projectsGrid article:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        #projectsGrid article:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        #projectsGrid article:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        #projectsGrid article:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Smooth modal appearance */
+        #modal:not(.hidden) .relative {
+            animation: modalPop 0.3s ease-out forwards;
+        }
+
+        @keyframes modalPop {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Smooth hover for buttons */
+        a,
+        button {
+            transition: all 0.25s ease;
+        }
+
+        /* Subtle shimmer on hero text */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        h2 span {
+            background: linear-gradient(90deg, #6ef3ff, #a28bff, #6ef3ff);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 6s infinite linear;
+        }
+
+
+        /* Extra tiny flourishes */
+        .glow {
+            box-shadow: 0 6px 30px rgba(110, 243, 255, 0.06), 0 2px 8px rgba(162, 139, 255, 0.04);
+        }
+
+        .neon-text {
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.02), 0 8px 30px rgba(110, 243, 255, 0.06);
+        }
+
+        /* Card hover tilt */
+        .tilt {
+            transition: transform 0.25s ease, box-shadow 0.25s ease
+        }
+
+        .tilt:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 12px 30px rgba(2, 8, 23, 0.6)
+        }
+
+        /* simple focus ring for keyboard users */
+        .focus-ring:focus {
+            outline: 2px solid rgba(110, 243, 255, 0.18);
+            outline-offset: 2px
+        }
+
+        /* modal fade */
+        .fade-enter {
+            opacity: 0
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transition: opacity .18s ease-out
+        }
+
+        /* small decorative animated gradient */
+        .radial-auras {
+            background: radial-gradient(circle at 10% 20%, rgba(110, 243, 255, 0.06), transparent 6%), radial-gradient(circle at 80% 80%, rgba(162, 139, 255, 0.05), transparent 8%)
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-[#020617] via-[#071129] to-[#00121a] text-slate-100 antialiased">
+    <main class="max-w-6xl mx-auto px-6 py-12">
+        <!-- Header -->
+        <header class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-12 h-12 rounded-lg bg-gradient-to-br from-aura to-vio flex items-center justify-center text-black font-bold">
+                    BD</div>
+                <div>
+                    <h1 class="text-2xl font-semibold neon-text">Ben's Devpro</h1>
+                    <p class="text-sm text-slate-400 -mt-1">Designer • Developer • Futurist</p>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="relative">
+                <!-- Desktop nav -->
+                <nav class="hidden lg:flex items-center gap-3">
+                    <a href="#projects" class="text-lg px-3 py-2 rounded-md hover:bg-white/5 focus-ring">Projects</a>
+                    <a href="#skills" class="text-lg px-3 py-2 rounded-md hover:bg-white/5 focus-ring">Skills</a>
+                    <a href="#contact" class="text-lg px-3 py-2 rounded-md hover:bg-white/5 focus-ring">Contact</a>
+                </nav>
+
+                <!-- Mobile / Tablet toggle -->
+                <button id="menuBtn"
+                    class="lg:hidden p-2 rounded-md border border-white/10 hover:bg-white/5 focus-ring">
+                    ☰
+                </button>
+
+                <!-- Mobile dropdown -->
+                <div id="mobileMenu"
+                    class="absolute right-0 mt-2 w-40 rounded-md border border-white/10 bg-[#0b1120] hidden flex-col py-2 text-sm shadow-lg z-50">
+                    <a href="#projects" class="block px-4 py-2 hover:bg-white/5">Projects</a>
+                    <a href="#skills" class="block px-4 py-2 hover:bg-white/5">Skills</a>
+                    <a href="#contact" class="block px-4 py-2 hover:bg-white/5">Contact</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero -->
+        <section class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+            <div class="md:col-span-2">
+                <h2 class="text-4xl md:text-5xl font-extrabold leading-tight">Crafting interfaces of tomorrow — <span
+                        class="text-aura">fast</span> and <span class="text-vio">beautiful</span></h2>
+                <p class="mt-4 text-slate-300 max-w-xl">As a front-end developer, I build fast, accessible, and visually
+                    immersive web interfaces that merge technology with design precision.</p>
+
+                <div class="mt-6 flex gap-3">
+                    <a href="#contact"
+                        class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-white/6 backdrop-blur-sm hover:scale-[1.02] transform transition focus-ring">Contact
+                        Me</a>
+                    <a href="#projects"
+                        class="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-white/6 hover:bg-white/3 transition focus-ring">View
+                        Projects</a>
+                </div>
+
+                <div class="mt-6 flex items-center gap-4 text-sm text-slate-400">
+                    <div class="flex items-center gap-2"><span
+                            class="w-3 h-3 bg-aura rounded-full animate-pulse"></span> <span
+                            class="ml-1 text-slate-200">Available for hire</span></div>
+                    <div class="hidden sm:block">•</div>
+                    <div class="flex items-center gap-2"><strong class="text-slate-200">Location</strong><span
+                            class="text-slate-400">Remote</span></div>
+                </div>
+            </div>
+
+            <div
+                class="relative p-6 rounded-2xl border border-white/6 backdrop-blur-md bg-gradient-to-br from-white/3 to-transparent radial-auras glow">
+                <div class="h-56 w-full rounded-lg overflow-hidden border border-white/4">
+                    <img src="https://picsum.photos/seed/hero/1200/800" alt="futuristic preview"
+                        class="w-full h-full object-cover" />
+                </div>
+                <div class="mt-4">
+                    <h4 class="font-semibold text-lg">Featured — Neon Dashboard</h4>
+                    <p class="text-sm text-slate-300 mt-1">A preview of an ongoing design system with live visuals.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects -->
+        <section id="projects" class="mt-16">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-semibold">Selected Projects</h3>
+                <div class="flex items-center gap-2" role="tablist" aria-label="Project categories">
+                    <button class="category-btn text-lg px-3 py-2 rounded-md bg-white/6 focus-ring"
+                        data-cat="All">All</button>
+                    <button class="category-btn text-lg px-3 py-2 rounded-md hover:bg-white/3 focus-ring"
+                        data-cat="Frontend">Frontend</button>
+                    <button class="category-btn text-lg px-3 py-2 rounded-md hover:bg-white/3 focus-ring"
+                        data-cat="Tooling">Tooling</button>
+                    <button class="category-btn text-lg px-3 py-2 rounded-md hover:bg-white/3 focus-ring"
+                        data-cat="Mixed Reality">Mixed Reality</button>
+                </div>
+            </div>
+
+            <div id="projectsGrid"
+                class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 auto-rows-fr">
+
+                <!-- Project Card -->
+                <article
+                    class="rounded-xl overflow-hidden border border-white/6 bg-gradient-to-br from-white/3 to-transparent tilt focus-ring"
+                    tabindex="0" data-category="Frontend" data-id="1">
+                    <button class="w-full text-left focus:outline-none project-open" aria-label="Tic Tac Toe.io">
+                        <div class="relative h-44 w-full">
+                            <img src="tictactoe.png" alt="Tic Tac Toe.io" class="w-full h-full object-cover" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            <div class="absolute left-4 bottom-4 text-white">
+                                <h4 class="font-semibold">Tic Tac Toe.io</h4>
+                                <p class="text-xs text-white/80">Front-end • HTML • TailwindCSS • Vue.js</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-slate-300"></p>
+                        </div>
+                    </button>
+                </article>
+
+                <article
+                    class="rounded-xl overflow-hidden border border-white/6 bg-gradient-to-br from-white/3 to-transparent tilt focus-ring"
+                    tabindex="0" data-category="Mixed Reality" data-id="2">
+                    <button class="w-full text-left focus:outline-none project-open" aria-label="Netflix Log-In Form">
+                        <div class="relative h-44 w-full">
+                            <img src="netflix.png" alt="Netflix Log-In Form" class="w-full h-full object-cover" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            <div class="absolute left-4 bottom-4 text-white">
+                                <h4 class="font-semibold">Netflix Log-In Form</h4>
+                                <p class="text-xs text-white/80">Front-end • HTML • Vanilla CSS</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-slate-300"></p>
+                        </div>
+                    </button>
+                </article>
+
+                <article
+                    class="rounded-xl overflow-hidden border border-white/6 bg-gradient-to-br from-white/3 to-transparent tilt focus-ring"
+                    tabindex="0" data-category="Tooling" data-id="3">
+                    <button class="w-full text-left focus:outline-none project-open" aria-label="Astronaut(demo)">
+                        <div class="relative h-44 w-full">
+                            <img src="astronaut.png" alt="Astronaut(demo)" class="w-full h-full object-cover" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            <div class="absolute left-4 bottom-4 text-white">
+                                <h4 class="font-semibold">Astronaut(demo)</h4>
+                                <p class="text-xs text-white/80">Tooling • HTML • Vanilla CSS</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-slate-300">
+                            </p>
+                        </div>
+                    </button>
+                </article>
+
+                <article
+                    class="rounded-xl overflow-hidden border border-white/6 bg-gradient-to-br from-white/3 to-transparent tilt focus-ring"
+                    tabindex="0" data-category="Frontend" data-id="4">
+                    <button class="w-full text-left focus:outline-none project-open" aria-label="Guess the Word">
+                        <div class="relative h-44 w-full">
+                            <img src="guesstheword.png" alt="Guess the Word" class="w-full h-full object-cover" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            <div class="absolute left-4 bottom-4 text-white">
+                                <h4 class="font-semibold">Guess the Word</h4>
+                                <p class="text-xs text-white/80">Front-end • HTML • TailwindCSS • JavaScript</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-slate-300"></p>
+                        </div>
+                    </button>
+                </article>
+                <!-- NEW PROJECT 5 -->
+                <article
+                    class="rounded-xl overflow-hidden border border-white/6 bg-gradient-to-br from-white/3 to-transparent tilt focus-ring"
+                    tabindex="0" data-category="Tooling" data-id="5">
+                    <button class="w-full text-left focus:outline-none project-open" aria-label="The Republic Kitchen">
+                        <div class="relative h-44 w-full">
+                            <img src="republic-kitchen.png" alt="The Republic Kitchen"
+                                class="w-full h-full object-cover" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            <div class="absolute left-4 bottom-4 text-white">
+                                <h4 class="font-semibold">The Republic Kitchen</h4>
+                                <p class="text-xs text-white/80">Front-end • HTML • TailwindCSS</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-slate-300"></p>
+                        </div>
+                    </button>
+                </article>
+
+                <!-- NEW PROJECT 6 -->
+                <article
+                    class="rounded-xl overflow-hidden border border-white/6 bg-gradient-to-br from-white/3 to-transparent tilt focus-ring"
+                    tabindex="0" data-category="Mixed Reality" data-id="6">
+                    <button class="w-full text-left focus:outline-none project-open" aria-label="Area">
+                        <div class="relative h-44 w-full">
+                            <img src="area.png" alt="Area" class="w-full h-full object-cover" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            <div class="absolute left-4 bottom-4 text-white">
+                                <h4 class="font-semibold">Area</h4>
+                                <p class="text-xs text-white/80">Front-end • HTML • TailwindCSS • Figma</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-slate-300"></p>
+                        </div>
+                    </button>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- About & Skills -->
+        <section id="skills" class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            <div class="md:col-span-2">
+                <h3 class="text-xl font-semibold">About & Skills</h3>
+                <p class="mt-3 text-slate-300 max-w-3xl">I design and build web interfaces with a focus on performance
+                    and delightful micro-interactions. My stack centers on modern tooling, Tailwind CSS, and animation
+                    libraries. I turn complex data into simple, understandable visuals.</p>
+
+                <div class="mt-6 space-y-4">
+                    <!-- HTML -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm text-slate-200">HTML</span>
+                            <span class="text-sm text-slate-400">90%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full"
+                                style="width: 90%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- CSS -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm text-slate-200">CSS</span>
+                            <span class="text-sm text-slate-400">80%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-pink-400 to-violet-500 h-2 rounded-full"
+                                style="width: 80%;"></div>
+                        </div>
+                    </div>
+
+
+                    <!-- Tailwind CSS -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm text-slate-200">Tailwind CSS</span>
+                            <span class="text-sm text-slate-400">80%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-sky-400 to-indigo-500 h-2 rounded-full"
+                                style="width: 80%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Bootstrap -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm text-slate-200">Bootstrap</span>
+                            <span class="text-sm text-slate-400">70%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full"
+                                style="width: 70%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Figma -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm text-slate-200">Figma</span>
+                            <span class="text-sm text-slate-400">50%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-emerald-400 to-teal-500 h-2 rounded-full"
+                                style="width: 50%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- JavaScript -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm text-slate-200">JavaScript</span>
+                            <span class="text-sm text-slate-400">65%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full"
+                                style="width: 65%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <aside class="p-4 rounded-xl border border-white/6 bg-gradient-to-br from-white/3 to-transparent">
+                <h4 class="font-semibold">Quick Facts</h4>
+                <ul class="mt-3 text-sm text-slate-300 space-y-2">
+                    <li>• Available for contract or full-time</li>
+                    <li>• Based remotely — open to relocation</li>
+
+                </ul>
+            </aside>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="mt-16">
+            <h3 class="text-xl font-semibold">Contact</h3>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <form id="contactForm"
+                    class="p-6 rounded-xl border border-white/6 bg-gradient-to-br from-white/3 to-transparent"
+                    autocomplete="off">
+                    <label class="block text-sm">
+                        <span class="text-slate-300">Your name</span>
+                        <input id="name" required
+                            class="mt-2 block w-full rounded-md bg-transparent border border-white/6 px-3 py-2 focus:ring-2 focus:ring-aura outline-none" />
+                    </label>
+
+                    <label class="block text-sm mt-3">
+                        <span class="text-slate-300">Email</span>
+                        <input id="email" required type="email"
+                            class="mt-2 block w-full rounded-md bg-transparent border border-white/6 px-3 py-2 focus:ring-2 focus:ring-aura outline-none" />
+                    </label>
+
+                    <label class="block text-sm mt-3">
+                        <span class="text-slate-300">Message</span>
+                        <textarea id="message" required rows="4"
+                            class="mt-2 block w-full rounded-md bg-transparent border border-white/6 px-3 py-2 focus:ring-2 focus:ring-aura outline-none"></textarea>
+                    </label>
+
+                    <div class="mt-4">
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-aura text-black font-medium">Send
+                            message</button>
+                        <a href="#"
+                            class="ml-3 inline-flex items-center gap-2 px-4 py-2 rounded-md border border-white/6">Download
+                            CV</a>
+                    </div>
+                </form>
+
+                <div class="p-6 rounded-xl border border-white/6 bg-gradient-to-br from-white/3 to-transparent">
+                    <h4 class="font-semibold">Reach Out</h4>
+                    <p class="mt-3 text-slate-300 text-sm">Prefer quick links? Use the buttons below to open email or
+                        view socials.</p>
+
+                    <div class="mt-4 flex gap-3">
+                        <a href="mailto:hello@example.com"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white/6">Email</a>
+                        <a href="#"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-white/6">GitHub</a>
+                    </div>
+
+                    <div class="mt-4 text-sm text-slate-400">Or find me on:</div>
+                    <div class="mt-3 flex gap-3">
+                        <a href="https://www.facebook.com/ben.luis.trobillas.2024"
+                            class="p-2 rounded-md hover:bg-white/5">Facebook</a>
+                        <a href="#" class="p-2 rounded-md hover:bg-white/5">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-14 py-8 text-center text-sm text-slate-500">© <span id="year"></span> Futura Portfolio • Built
+            with ♥ and Tailwind</footer>
+    </main>
+
+    <!-- Project Modal (hidden by default) -->
+    <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center p-6" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/60" data-close></div>
+        <div class="relative max-w-3xl w-full rounded-2xl overflow-hidden border border-white/6 bg-deep">
+            <button id="modalClose" class="absolute right-3 top-3 p-2 rounded-full bg-white/6">✕</button>
+            <div id="modalContent">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Small JS to power filtering, modal, and form (plain JavaScript)
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Category filter
+        const categoryBtns = Array.from(document.querySelectorAll('.category-btn'));
+        const cards = Array.from(document.querySelectorAll('#projectsGrid article'));
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('bg-white/6'));
+                btn.classList.add('bg-white/6');
+                const cat = btn.getAttribute('data-cat');
+                cards.forEach(card => {
+                    const matches = cat === 'All' || card.getAttribute('data-category') === cat;
+                    card.style.display = matches ? '' : 'none';
+                });
+            });
+        });
+
+        // Project modal
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal(data) {
+            modalContent.innerHTML = `
+        <img src="${data.img}" alt="${data.title}" class="w-full h-64 object-cover" />
+        <div class="p-6">
+          <h3 class="text-2xl font-semibold">${data.title}</h3>
+          <p class="mt-2 text-slate-300">${data.description}</p>
+          <div class="mt-4 flex items-center gap-2 text-sm text-slate-400">${data.tech.map(t => `<span class=\"px-2 py-1 rounded bg-white/3\">${t}</span>`).join('')}</div>
+          <div class="mt-6 flex gap-3">
+            <a href="${data.link || '#'}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-aura text-black">Live demo</a>
+            <a href="#" class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-white/6">View repo</a>
+          </div>
+        </div>
+      `;
+            modal.classList.remove('hidden');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            modalContent.innerHTML = '';
+        }
+
+        // Example data mapping (keep in sync with HTML cards)
+        const projects = {
+            '1': { id: 1, title: 'Tic Tac Toe.io', category: 'Frontend', description: '', tech: ['HTML', 'TailwindCSS', 'Vue.js'], link: '#', img: 'tictactoe.png' },
+            '2': { id: 2, title: 'Netflix Log-In Form', category: 'Mixed Reality', description: '', tech: ['HTML', 'VanillaCSS'], link: '#', img: 'netflix.png' },
+            '3': { id: 3, title: 'Astronaut(demo)', category: 'Tooling', description: '', tech: ['HTML', 'Bootstrap',], link: '#', img: 'astronaut.png' },
+            '4': { id: 4, title: 'Guess the word', category: 'Frontend', description: '', tech: ['HTML', 'TailwindCSS', 'JavaScript'], link: '#', img: 'guesstheword.png' },
+            '5': { id: 5, title: 'The Republic Kitchen', category: 'Frontend', description: '', tech: ['HTML', 'TailwindCSS',], link: '#', img: 'republic-kitchen.png' },
+            '6': { id: 6, title: 'Area', category: 'Frontend', description: '', tech: ['HTML', 'TailwindCSS', 'Figma'], link: '#', img: 'area.png' },
+        };
+
+        // Attach open handlers
+        Array.from(document.querySelectorAll('.project-open')).forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = btn.closest('article').getAttribute('data-id');
+                openModal(projects[id]);
+            });
+        });
+
+        // close handlers
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.querySelector('[data-close]').addEventListener('click', closeModal);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+        // Simple contact form handler (demo)
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            if (!name || !email || !message) return alert('Please complete the form.');
+            // In production: send to API, Netlify Forms, Formspree, etc.
+            alert('Thanks ' + name + '! Message received (demo). Replace this handler with your API).');
+            this.reset();
+        });
+
+        // Accessibility: allow Enter key on focused article to open modal
+        cards.forEach(card => {
+            card.addEventListener('keydown', (e) => { if (e.key === 'Enter') card.querySelector('.project-open').click(); });
+        });
+
+        // Mobile nav toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        });
+
+    </script>
+</body>
+
+</html>
